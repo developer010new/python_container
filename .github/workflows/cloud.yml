@@ -1,0 +1,28 @@
+name: Anonymous Proxy
+on: workflow_dispatch
+
+jobs:
+  proxy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Gost and Cloudflared
+        run: |
+          # دانلود و نصب Gost (پروکسی سرور)
+          wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz
+          gunzip gost-linux-amd64-2.11.5.gz
+          chmod +x gost-linux-amd64-2.11.5
+          sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost
+
+          # دانلود Cloudflared
+          wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared-linux-amd64
+          sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
+
+      - name: Start Proxy and Tunnel
+        run: |
+          # اجرای پروکسی Gost روی پورت 8080 بصورت محلی
+          gost -L=socks5://:8080 > /dev/null 2>&1 &
+          
+          # ایجاد تونل کلودفلر بدون نیاز به اکانت
+          # این دستور یک لینک موقت به شما می‌دهد
+          cloudflared tunnel --url tcp://localhost:8080
