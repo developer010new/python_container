@@ -1,0 +1,14 @@
+name: v via Tmate
+on: workflow_dispatch # اجرای دستی
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: false
